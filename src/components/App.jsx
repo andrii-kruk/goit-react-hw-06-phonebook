@@ -1,55 +1,44 @@
-import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { ToastContainer, toast } from 'react-toastify';
 
 import { ContactForm } from './ContactForm/ContactForm';
 import { Filter } from './Filter/Filter';
 import { ContactList } from './ContactList/ContactList';
+import { addContact, deleteContact } from 'redux/contactsReducer';
 
 import 'react-toastify/dist/ReactToastify.css';
 import { errorNotifyOptions, succesNotifyOptions } from 'notification';
 
 import css from './App.module.css';
+import { changeFilter } from 'redux/filterReducer';
 const { section, contacts_container, contact_list_title } = css;
 
 export const App = () => {
-  const [contacts, setContacts] = useState([]);
-  const [filter, setFilter] = useState('');
+  const contacts = useSelector(state => state.contacts);
+  const filter = useSelector(state => state.filter);
 
   const normalizedContact = filter.toLowerCase();
-  const filteredContacts = contacts.filter(({ name }) =>
+  const filteredContacts = contacts.items.filter(({ name }) =>
     name.toLowerCase().includes(normalizedContact)
   );
 
-  useEffect(() => {
-    const storagedContacts = localStorage.getItem('contacts');
-    const parsedContacts = JSON.parse(storagedContacts) ?? [];
-
-    setContacts(parsedContacts);
-  }, []);
-
-  useEffect(() => {
-    if (contacts.length) {
-      localStorage.setItem('contacts', JSON.stringify(contacts));
-    }
-  }, [contacts]);
+  const dispatch = useDispatch();
 
   const addContactToList = contact => {
-    if (contacts.some(user => user.name === contact.name)) {
-      toast.error('This contanct already added', errorNotifyOptions);
-      return;
-    }
+    if (contacts.items.some(user => user.name === contact.name))
+      return toast.error('This contanct already added', errorNotifyOptions);
 
-    setContacts(state => [contact, ...state]);
+    dispatch(addContact(contact));
 
     toast.success('Contact seccesfuly added!', succesNotifyOptions);
   };
 
   const removeContactFromList = index => {
-    setContacts(state => state.filter((contact, i) => i !== index));
+    dispatch(deleteContact(index));
   };
 
   const filterContacts = ({ target }) => {
-    setFilter(target.value);
+    dispatch(changeFilter(target.value));
   };
 
   return (
@@ -58,7 +47,7 @@ export const App = () => {
 
       <div className={contacts_container}>
         <h3 className={contact_list_title}>Contact List</h3>
-        {contacts.length === 0 ? (
+        {contacts.items.length === 0 ? (
           <h3 className={contact_list_title}>There are no contacts</h3>
         ) : (
           <>
