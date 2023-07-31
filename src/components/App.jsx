@@ -28,7 +28,6 @@ export const App = () => {
 
   const removeContactFromList = id => {
     dispatch(deleteContact(id));
-    dispatch(changeFilter(''));
   };
 
   const filterContacts = ({ target }) => {

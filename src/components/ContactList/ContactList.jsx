@@ -1,14 +1,16 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import ContactListItem from './ContactListItem/ContactListItem';
 
 import css from './ContactList.module.css';
 import { getContacts } from 'redux/selectors';
+import { changeFilter } from 'redux/filterReducer';
 const { contact_list_container, contact_list } = css;
 
 export const ContactList = ({ removeContact }) => {
   const contacts = useSelector(getContacts);
+  const dispatch = useDispatch();
 
   const filteredContacts = useSelector(state => {
     const filter = state.filter.toLowerCase();
@@ -19,6 +21,8 @@ export const ContactList = ({ removeContact }) => {
 
   const contactsToDisplay =
     filteredContacts.length > 0 ? filteredContacts : contacts.items;
+
+  if (filteredContacts.length === 0) dispatch(changeFilter(''));
 
   return (
     <div className={contact_list_container}>
