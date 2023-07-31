@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
 import css from './ContactListItem.module.css';
 const { contact_item, contact_info, remove_button } = css;
 
 class ContactListItem extends Component {
   onRemoveBtnClick = () => {
-    this.props.removeContact(this.props.index);
+    this.props.removeContact(this.props.id);
   };
 
   render() {
@@ -28,12 +27,5 @@ class ContactListItem extends Component {
     );
   }
 }
-
-ContactListItem.propTypes = {
-  name: PropTypes.string.isRequired,
-  number: PropTypes.string.isRequired,
-  removeContact: PropTypes.func.isRequired,
-  index: PropTypes.number.isRequired,
-};
 
 export default ContactListItem;

@@ -1,10 +1,12 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import css from './Filter.module.css';
+import { useSelector } from 'react-redux';
+import { getFilter } from 'redux/selectors';
 const { filter_input } = css;
 
-export const Filter = ({ onChange, value }) => {
+export const Filter = ({ onChange }) => {
+  const filter = useSelector(getFilter);
   return (
     <input
       type="text"
@@ -13,12 +15,7 @@ export const Filter = ({ onChange, value }) => {
       className={filter_input}
       placeholder="Search contacts..."
       onChange={onChange}
-      value={value}
+      value={filter}
     />
   );
-};
-
-Filter.propTypes = {
-  onChange: PropTypes.func.isRequired,
-  value: PropTypes.string.isRequired,
 };

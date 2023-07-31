@@ -7,34 +7,28 @@ import { ContactList } from './ContactList/ContactList';
 import { addContact, deleteContact } from 'redux/contactsReducer';
 
 import 'react-toastify/dist/ReactToastify.css';
-import { errorNotifyOptions, succesNotifyOptions } from 'notification';
 
 import css from './App.module.css';
 import { changeFilter } from 'redux/filterReducer';
+import { getContacts } from 'redux/selectors';
+import { handleNotification } from 'utils';
 const { section, contacts_container, contact_list_title } = css;
 
 export const App = () => {
-  const contacts = useSelector(state => state.contacts);
-  const filter = useSelector(state => state.filter);
-
-  const normalizedContact = filter.toLowerCase();
-  const filteredContacts = contacts.items.filter(({ name }) =>
-    name.toLowerCase().includes(normalizedContact)
-  );
-
+  const contacts = useSelector(getContacts);
   const dispatch = useDispatch();
 
   const addContactToList = contact => {
     if (contacts.items.some(user => user.name === contact.name))
-      return toast.error('This contanct already added', errorNotifyOptions);
+      return handleNotification('This contanct already added', 'error');
 
     dispatch(addContact(contact));
-
-    toast.success('Contact seccesfuly added!', succesNotifyOptions);
+    handleNotification('Contact seccesfuly added!', 'success');
   };
 
-  const removeContactFromList = index => {
-    dispatch(deleteContact(index));
+  const removeContactFromList = id => {
+    dispatch(deleteContact(id));
+    dispatch(changeFilter(''));
   };
 
   const filterContacts = ({ target }) => {
@@ -47,15 +41,15 @@ export const App = () => {
 
       <div className={contacts_container}>
         <h3 className={contact_list_title}>Contact List</h3>
+
         {contacts.items.length === 0 ? (
-          <h3 className={contact_list_title}>There are no contacts</h3>
+          <div>
+            <h3 className={contact_list_title}>There are no contacts</h3>
+          </div>
         ) : (
           <>
-            <Filter onChange={filterContacts} value={filter} />
-            <ContactList
-              contacts={filteredContacts}
-              removeContact={removeContactFromList}
-            />
+            <Filter onChange={filterContacts} />
+            <ContactList removeContact={removeContactFromList} />
           </>
         )}
       </div>
