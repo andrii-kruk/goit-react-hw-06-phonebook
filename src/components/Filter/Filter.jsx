@@ -1,12 +1,19 @@
-import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { getFilter } from 'redux/selectors';
+import { changeFilter } from 'redux/filterReducer';
 
 import css from './Filter.module.css';
-import { useSelector } from 'react-redux';
-import { getFilter } from 'redux/selectors';
+
 const { filter_input } = css;
 
-export const Filter = ({ onChange }) => {
+export const Filter = () => {
   const filter = useSelector(getFilter);
+  const dispatch = useDispatch();
+
+  const filterContacts = ({ target }) => {
+    dispatch(changeFilter(target.value));
+  };
   return (
     <input
       type="text"
@@ -14,7 +21,7 @@ export const Filter = ({ onChange }) => {
       name="filter"
       className={filter_input}
       placeholder="Search contacts..."
-      onChange={onChange}
+      onChange={filterContacts}
       value={filter}
     />
   );
